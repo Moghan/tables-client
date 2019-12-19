@@ -17,8 +17,6 @@ const Users = () => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
 
-    console.log("data", data);
-
     return (
         <div>
             <div>
@@ -41,7 +39,7 @@ const Users = () => {
                 </ul>
             </nav>
             <ul>
-                { data.users.map((user: any) => <li>{user.name}</li>) }
+                { data.users.map((user: any, index: number) => <li key={index}>{user.name}</li>) }
             </ul>
         </div>
     )

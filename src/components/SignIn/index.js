@@ -13,7 +13,21 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+
 import {Redirect} from 'react-router-dom';
+
+import { useQuery } from '@apollo/react-hooks';
+import { gql } from 'apollo-boost';
+import Login from './Login';
+
+const GET_TOKEN = gql`
+  query($name: String!, $password: String!)
+  {
+    login (name: $name, password: $password) {
+      token
+    }
+  }
+`;
 
 function Copyright() {
   return (
@@ -48,18 +62,45 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+
+
 export default function SignIn() {
   const classes = useStyles();
-  const [link, setLink] = React.useState(null);
-
-  const handleSubmit = () => {
-    console.log("jandle submit");
-    setLink(<Redirect to="/" />);
+  const [login, setLogin] = React.useState(false);
+  const [values, setValues] = React.useState({
+    email: '',
+    password:''
+  });
+ /* 
+  const { called, loading, error, data } = useQuery(GET_TOKEN, {
+    variables: { name: "zxc", password: "zxc" },
+  });
+    
+  if (called) {
+    if (loading){
+      return <p>Loading...</p>;
+    }
+    if (error) {
+      console.log("err data", data);
+      return <p>Error :(</p>;
+    }
+    console.log("succ data", data);
+    return <p>Success !!!</p>
+  }
+*/
+  const handleChange = prop => event => {
+    setValues({...values, [prop]: event.target.value});
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLogin(true);
+  }
+
+  console.log("val", values);
   return (
     <Container component="main" maxWidth="xs">
-      {link}
+      { login && <Login email={values.email} password={values.password} setLogin={setLogin}/> }
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -70,6 +111,7 @@ export default function SignIn() {
         </Typography>
         <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <TextField
+            onChange={handleChange('email')}
             variant="outlined"
             margin="normal"
             required
@@ -81,6 +123,7 @@ export default function SignIn() {
             autoFocus
           />
           <TextField
+            onChange={handleChange('password')}
             variant="outlined"
             margin="normal"
             required

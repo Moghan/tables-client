@@ -19,7 +19,7 @@ const Home = () => {
     const [createUser, { data }] = useMutation(CREATE_USER);
 
     React.useEffect(() => {
-        createUser({ variables: { name: "Bea4", password: "bea" } });        
+        //createUser({ variables: { name: "Bea4", password: "bea" } });        
     }, [])
 
     // if (loading) return <p>Loading...</p>;

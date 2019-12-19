@@ -13,6 +13,22 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { gql } from 'apollo-boost';
+
+import { Redirect } from 'react-router-dom';
+
+const CREATE_USER = gql`
+  mutation createUser($name: String! $password: String!) {
+    createUser(name: $name password: $password) {
+      name
+      posts {
+          title
+      }
+    }
+  }
+`;
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -48,9 +64,36 @@ const useStyles = makeStyles(theme => ({
 
 export default function SignUp() {
   const classes = useStyles();
+//  const [ redirect, setRedirect ] = React.useState(null);
+  const [createUser, { data, loading, called }] = useMutation(CREATE_USER);
+  const [values, setValues] = React.useState({
+    email: '',
+    password: ''
+  })
+
+  React.useEffect(() => {
+      console.log("onMount");
+      // createUser({ variables: { name: values.email, password: values.password } });        
+  }, [])
+
+  const handleChange = prop => event => {
+    setValues({ ...values, [prop]: event.target.value })
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("submit");
+    createUser({ variables: { name: values.email, password: values.password } });        
+    // setRedirect(<Redirect to='/users' />);
+  }
+
+  console.log("data", loading, called, data);
+
+  const redirect = !loading && called ? <Redirect to='/users' /> : '';
 
   return (
     <Container component="main" maxWidth="xs">
+      { redirect }
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -59,7 +102,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -86,6 +129,7 @@ export default function SignUp() {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                onChange={handleChange('email')}
                 variant="outlined"
                 required
                 fullWidth
@@ -97,6 +141,7 @@ export default function SignUp() {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                onChange={handleChange('password')}
                 variant="outlined"
                 required
                 fullWidth
