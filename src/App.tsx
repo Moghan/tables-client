@@ -4,6 +4,7 @@ import Dashboard from './components/Dashboard/Dashboard';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import Home from './components/Home';
+import Users from './components/Home/Users';
 
 import {
   BrowserRouter as Router,
@@ -17,6 +18,9 @@ const App: React.FC = () => {
       <Switch>
         <Route exact path="/">
           <Home />
+        </Route>
+        <Route path="/users">
+          <Users />
         </Route>
         <Route path="/dashboard">
           <Dashboard />

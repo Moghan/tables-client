@@ -1,29 +1,21 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
-const CREATE_USER = gql`
-  mutation createUser($name: String! $password: String!) {
-    createUser(name: $name password: $password) {
+const GET_USERS = gql`
+  {
+    users {
       name
-      posts {
-          title
-      }
     }
   }
 `;
 
-const Home = () => {
-    // const { loading, error, data } = useQuery(CREATE_GUEST);
-    const [createUser, { data }] = useMutation(CREATE_USER);
-
-    React.useEffect(() => {
-        createUser({ variables: { name: "Bea4", password: "bea" } });        
-    }, [])
-
-    // if (loading) return <p>Loading...</p>;
-    // if (error) return <p>Error :(</p>;
+const Users = () => {
+    const { loading, error, data } = useQuery(GET_USERS);
+    
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
 
     console.log("data", data);
 
@@ -35,7 +27,7 @@ const Home = () => {
             <nav>
                 <ul>
                     <li>
-                        <Link to="/users">Users</Link>
+                        <Link to="/">Home</Link>
                     </li>
                     <li>
                         <Link to="/dashboard">Dashboard</Link>
@@ -48,8 +40,11 @@ const Home = () => {
                     </li>
                 </ul>
             </nav>
+            <ul>
+                { data.users.map((user: any) => <li>{user.name}</li>) }
+            </ul>
         </div>
     )
 }
 
-export default Home;
+export default Users;
